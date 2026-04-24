@@ -6,6 +6,7 @@
     let p3WheelMembers     = [];
     let p3TotalDeg         = 0;
     let p3IsSpinning       = false;
+    let p3AutoMode         = false;
 
     const P3_COLORS = [
       '#ff4e78','#ffdb3c','#62de86','#1ca655',
@@ -20,6 +21,7 @@
       p3CurrentStep      = 0;
       p3TotalDeg         = 0;
       p3IsSpinning       = false;
+      p3AutoMode         = false;
       p3AvailableMembers = [...state.selectedMembers];
 
       // Build 12 fan groups from calledNumbers (chunks of 4)
@@ -49,6 +51,7 @@
 
       renderP3Groups();
       loadP3Group(state.groupOrder[0]);
+      updateAutoBtn();
     }
 
     /* ============================================================
@@ -196,9 +199,14 @@
       p3CurrentStep++;
 
       if (p3CurrentStep >= 12) {
+        p3AutoMode = false;
+        updateAutoBtn();
         setTimeout(() => navigateTo('result'), 1200);
       } else {
-        setTimeout(() => loadP3Group(state.groupOrder[p3CurrentStep]), 800);
+        setTimeout(() => {
+          loadP3Group(state.groupOrder[p3CurrentStep]);
+          if (p3AutoMode) setTimeout(() => spinWheel(), 350);
+        }, 800);
       }
     }
 
@@ -246,4 +254,36 @@
     function setP3Btns(enabled) {
       document.getElementById('btnPutarWheel').disabled    = !enabled;
       document.getElementById('btnLangsungPilih').disabled = !enabled;
+      const autoBtn = document.getElementById('btnAutoSpin');
+      // Keep auto button clickable while auto mode is running so user can stop it
+      if (autoBtn) autoBtn.disabled = !enabled && !p3AutoMode;
+    }
+
+    /* ============================================================
+       PHASE 3 — AUTO SPIN
+       ============================================================ */
+    function toggleAutoSpin() {
+      if (p3AutoMode) {
+        p3AutoMode = false;
+        updateAutoBtn();
+        // Re-enable manual buttons if not currently spinning
+        if (!p3IsSpinning) setP3Btns(p3WheelMembers.length > 0);
+      } else {
+        if (p3IsSpinning || p3WheelMembers.length === 0) return;
+        p3AutoMode = true;
+        updateAutoBtn();
+        spinWheel();
+      }
+    }
+
+    function updateAutoBtn() {
+      const btn = document.getElementById('btnAutoSpin');
+      if (!btn) return;
+      if (p3AutoMode) {
+        btn.classList.add('active');
+        btn.innerHTML = '<span class="icon" style="font-size:16px;vertical-align:-2px;">stop_circle</span> Stop Auto';
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = '<span class="icon" style="font-size:16px;vertical-align:-2px;">fast_forward</span> Auto Semua';
+      }
     }

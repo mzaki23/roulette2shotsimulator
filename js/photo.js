@@ -73,38 +73,68 @@
     /* ============================================================
        PHOTO — CAMERA
        ============================================================ */
-    function startPhotoCamera() {
+    async function startPhotoCamera() {
       stopPhotoCamera();
+      setCamStatus('');
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setCamStatus('Kamera tidak didukung browser ini');
         startPhotoCountdown(); return;
       }
 
-      // Always prefer front (selfie) camera; explicit device selection overrides
-      const videoConstraints = selectedCameraId
-        ? { deviceId: { exact: selectedCameraId }, width: { ideal: 1280 }, height: { ideal: 720 } }
-        : { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } };
+      // Progressive fallback chain — from most specific to most permissive
+      const constraintSets = selectedCameraId
+        ? [
+            { deviceId: { exact: selectedCameraId }, width: { ideal: 1280 }, height: { ideal: 720 } },
+            { deviceId: { exact: selectedCameraId } },
+          ]
+        : [
+            { facingMode: { ideal: 'user' }, width: { ideal: 1280 }, height: { ideal: 720 } },
+            { facingMode: { ideal: 'user' } },
+            { width: { ideal: 1280 }, height: { ideal: 720 } },
+            true,
+          ];
 
-      navigator.mediaDevices.getUserMedia({
-        video: videoConstraints,
-        audio: false,
-      }).then(stream => {
-        photoStream = stream;
-        const vid = document.getElementById('photoVideo');
-        vid.srcObject = stream;
-        if (vid.readyState >= 1) {
+      let stream = null;
+      for (const videoConstraints of constraintSets) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: false });
+          break;
+        } catch (_) {}
+      }
+
+      if (!stream) {
+        setCamStatus('Izin kamera ditolak atau tidak tersedia');
+        startPhotoCountdown(); return;
+      }
+
+      photoStream = stream;
+
+      // Show active camera label
+      const track = stream.getVideoTracks()[0];
+      if (track) {
+        const label = track.label || '';
+        const isFront = /front|facing user|selfie|facetime/i.test(label);
+        const isBack  = /back|rear|environment/i.test(label);
+        setCamStatus(label ? (isFront ? 'Kamera Depan' : isBack ? 'Kamera Belakang' : label) : '');
+      }
+
+      const vid = document.getElementById('photoVideo');
+      vid.srcObject = stream;
+      if (vid.readyState >= 1) {
+        vid.play().catch(() => {});
+        startPhotoCountdown();
+      } else {
+        vid.onloadedmetadata = () => {
           vid.play().catch(() => {});
           startPhotoCountdown();
-        } else {
-          vid.onloadedmetadata = () => {
-            vid.play().catch(() => {});
-            startPhotoCountdown();
-          };
-        }
-      }).catch(() => {
-        // Camera not available or permission denied — proceed without live feed
-        startPhotoCountdown();
-      });
+        };
+      }
+    }
+
+    function setCamStatus(msg) {
+      const el = document.getElementById('photoCamStatus');
+      if (el) el.textContent = msg;
     }
 
     /* ============================================================
@@ -119,63 +149,80 @@
 
       try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) {
-          throw new Error('API Kamera tidak didukung di browser ini atau koneksi tidak aman (butuh HTTPS/localhost).');
+          throw new Error('API Kamera tidak didukung (butuh HTTPS/localhost).');
         }
 
-        // If no active stream, request permission first so device labels are not empty
-        if (!photoStream) {
-          const tempStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-          tempStream.getTracks().forEach(t => t.stop()); // release immediately
-        }
+        // Enumerate first (fast path if permission already granted)
+        let devices = await navigator.mediaDevices.enumerateDevices();
+        let cameras = devices.filter(d => d.kind === 'videoinput');
 
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const cameras = devices.filter(d => d.kind === 'videoinput');
+        // If labels are all empty, permission hasn't been granted yet — request it
+        const hasLabels = cameras.some(c => c.label);
+        if (!hasLabels || cameras.length === 0) {
+          try {
+            const tempStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            tempStream.getTracks().forEach(t => t.stop());
+            // Re-enumerate now that permission is granted
+            devices = await navigator.mediaDevices.enumerateDevices();
+            cameras = devices.filter(d => d.kind === 'videoinput');
+          } catch (_) {
+            // permission denied — show what we have (no labels)
+          }
+        }
 
         if (cameras.length === 0) {
           listEl.innerHTML = '<div class="camera-sheet-empty">Tidak ada kamera yang ditemukan.</div>';
           return;
         }
 
-        // Determine which deviceId is currently active
+        // Which deviceId is currently active?
         const activeId = selectedCameraId ||
-          (photoStream && photoStream.getVideoTracks()[0]?.getSettings().deviceId) ||
-          cameras[0].deviceId;
+          (photoStream && photoStream.getVideoTracks()[0]?.getSettings()?.deviceId) ||
+          null;
 
         listEl.innerHTML = '';
         cameras.forEach((cam, idx) => {
-          const isActive = cam.deviceId === activeId;
-          const label    = cam.label || `Kamera ${idx + 1}`;
+          const isActive = activeId ? cam.deviceId === activeId : idx === 0;
+
+          // Friendly label: detect front/back from label string
+          let rawLabel = cam.label || '';
+          let friendlyLabel;
+          if (!rawLabel) {
+            friendlyLabel = `Kamera ${idx + 1}`;
+          } else if (/front|facing user|selfie|facetime/i.test(rawLabel)) {
+            friendlyLabel = `Kamera Depan`;
+          } else if (/back|rear|environment/i.test(rawLabel)) {
+            friendlyLabel = `Kamera Belakang`;
+          } else {
+            friendlyLabel = rawLabel;
+          }
 
           const btn = document.createElement('button');
           btn.className = 'camera-sheet-item' + (isActive ? ' active' : '');
+          btn.dataset.deviceId = cam.deviceId;
           btn.innerHTML = `
             <span class="icon cam-icon">videocam</span>
-            <span class="cam-item-label">${label}</span>
+            <span class="cam-item-label">${friendlyLabel}</span>
             <span class="icon cam-item-check">check_circle</span>
           `;
-          btn.addEventListener('click', () => selectCamera(cam.deviceId));
+          btn.addEventListener('click', () => selectCamera(cam.deviceId, friendlyLabel));
           listEl.appendChild(btn);
         });
 
       } catch (err) {
-        listEl.innerHTML = `<div class="camera-sheet-empty">Gagal memuat kamera: ${err.message}</div>`;
+        listEl.innerHTML = `<div class="camera-sheet-empty">Gagal: ${err.message}</div>`;
       }
     }
 
     /* ============================================================
        CAMERA SETTINGS — SELECT DEVICE
        ============================================================ */
-    function selectCamera(deviceId) {
+    function selectCamera(deviceId, friendlyLabel) {
       selectedCameraId = deviceId;
       closeCameraSheet();
+      if (friendlyLabel) setCamStatus(friendlyLabel);
 
-      // Update active highlight without re-opening sheet
-      document.querySelectorAll('.camera-sheet-item').forEach(btn => {
-        const label = btn.querySelector('.cam-item-label')?.textContent || '';
-        // We re-render on next open, so just close for now
-      });
-
-      // Restart camera with new device (reset countdown)
+      // Restart camera with selected device (reset countdown)
       if (photoCountdown) { clearInterval(photoCountdown); photoCountdown = null; }
       document.getElementById('photoCountdown').classList.remove('visible');
       startPhotoCamera();
