@@ -60,8 +60,13 @@
         const html = await res.text();
         const temp = document.createElement('div');
         temp.innerHTML = html.trim();
-        const screenEl = temp.firstElementChild; 
-        document.getElementById('app').appendChild(screenEl);
+        // Grab the screen element before moving children (it's always the first one)
+        const screenEl = temp.querySelector('.screen');
+        const appEl = document.getElementById('app');
+        // Append ALL children so overlays (cameraSheet, photoResultModal, etc.) also land in DOM
+        while (temp.firstElementChild) {
+          appEl.appendChild(temp.firstElementChild);
+        }
         return screenEl;
       } catch (e) {
         console.error('Failed to load screen:', key, e);

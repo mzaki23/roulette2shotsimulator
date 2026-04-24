@@ -34,3 +34,44 @@
     </main>
     <div class="footer-mount"></div>
   </div>
+
+  <!-- ============================================================
+       CAMERA SETTINGS SHEET (bottom sheet overlay)
+       ============================================================ -->
+  <div id="cameraSheet" role="dialog" aria-modal="true" aria-label="Pilih Kamera">
+    <div class="camera-sheet-card">
+      <div class="camera-sheet-handle"></div>
+      <div class="camera-sheet-title">
+        <span class="icon">videocam</span>
+        Pilih Kamera
+      </div>
+      <div class="camera-sheet-list" id="cameraSheetList">
+        <div class="camera-sheet-empty">Memuat daftar kamera...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PHOTO RESULT MODAL
+       ============================================================ -->
+  <div id="photoResultModal" role="dialog" aria-modal="true" aria-label="Hasil Foto">
+    <div class="photo-modal-card">
+      <div class="photo-modal-img-wrap">
+        <img id="photoModalImg" alt="Hasil foto" />
+      </div>
+      <div class="photo-modal-footer">
+        <div class="photo-modal-info">
+          <div class="photo-modal-eyebrow">2Shot bersama</div>
+          <div class="photo-modal-member" id="photoModalMemberName">—</div>
+        </div>
+        <div class="photo-modal-btns">
+          <button class="photo-modal-btn-ulangi" onclick="photoUlangi()">
+            <span class="icon">replay</span> Ulangi
+          </button>
+          <button class="photo-modal-btn-download" onclick="photoDownload()">
+            <span class="icon">download</span> Simpan Foto
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -80,16 +80,10 @@
         startPhotoCountdown(); return;
       }
 
-      // Build video constraints:
-      // - Explicit device selected → use that exact deviceId
-      // - Mobile (no selection)   → no facingMode, let device auto-pick
-      // - Desktop (no selection)  → prefer user/front camera
-      const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      // Always prefer front (selfie) camera; explicit device selection overrides
       const videoConstraints = selectedCameraId
         ? { deviceId: { exact: selectedCameraId }, width: { ideal: 1280 }, height: { ideal: 720 } }
-        : isMobile
-          ? { width: { ideal: 1280 }, height: { ideal: 720 } }           // auto: device default
-          : { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } }; // desktop: front cam
+        : { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } };
 
       navigator.mediaDevices.getUserMedia({
         video: videoConstraints,
@@ -98,8 +92,17 @@
         photoStream = stream;
         const vid = document.getElementById('photoVideo');
         vid.srcObject = stream;
-        vid.onloadedmetadata = () => { vid.play(); startPhotoCountdown(); };
+        if (vid.readyState >= 1) {
+          vid.play().catch(() => {});
+          startPhotoCountdown();
+        } else {
+          vid.onloadedmetadata = () => {
+            vid.play().catch(() => {});
+            startPhotoCountdown();
+          };
+        }
       }).catch(() => {
+        // Camera not available or permission denied — proceed without live feed
         startPhotoCountdown();
       });
     }
@@ -108,8 +111,8 @@
        CAMERA SETTINGS — OPEN SHEET
        ============================================================ */
     async function openCameraSettings() {
-      const sheet   = document.getElementById('cameraSheet');
-      const listEl  = document.getElementById('cameraSheetList');
+      const sheet  = document.getElementById('cameraSheet');
+      const listEl = document.getElementById('cameraSheetList');
 
       listEl.innerHTML = '<div class="camera-sheet-empty">Memuat daftar kamera...</div>';
       sheet.classList.add('open');
@@ -119,7 +122,12 @@
           throw new Error('API Kamera tidak didukung di browser ini atau koneksi tidak aman (butuh HTTPS/localhost).');
         }
 
-        // Must request permission first so labels are not empty
+        // If no active stream, request permission first so device labels are not empty
+        if (!photoStream) {
+          const tempStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          tempStream.getTracks().forEach(t => t.stop()); // release immediately
+        }
+
         const devices = await navigator.mediaDevices.enumerateDevices();
         const cameras = devices.filter(d => d.kind === 'videoinput');
 
@@ -128,13 +136,15 @@
           return;
         }
 
+        // Determine which deviceId is currently active
+        const activeId = selectedCameraId ||
+          (photoStream && photoStream.getVideoTracks()[0]?.getSettings().deviceId) ||
+          cameras[0].deviceId;
+
         listEl.innerHTML = '';
         cameras.forEach((cam, idx) => {
-          const isActive = selectedCameraId
-            ? cam.deviceId === selectedCameraId
-            : idx === 0;     // default: first device highlighted
-
-          const label = cam.label || `Kamera ${idx + 1}`;
+          const isActive = cam.deviceId === activeId;
+          const label    = cam.label || `Kamera ${idx + 1}`;
 
           const btn = document.createElement('button');
           btn.className = 'camera-sheet-item' + (isActive ? ' active' : '');
