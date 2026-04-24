@@ -383,9 +383,3 @@
       if (e.target && e.target.id === 'photoResultModal') closePhotoModal();
     });
 
-    // Patch navigateTo to close modal when leaving photo
-    const _navTo = navigateTo;
-    window.navigateTo = function(key) {
-      if (state.currentScreen === 'photo') closePhotoModal();
-      _navTo(key);
-    };

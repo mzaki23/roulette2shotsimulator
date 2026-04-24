@@ -72,8 +72,11 @@
     async function navigateTo(key) {
       if (state.currentScreen === key && document.getElementById(SCREEN_IDS[key])) return;
 
-      // Stop camera when leaving photo screen
-      if (state.currentScreen === 'photo' && typeof stopPhotoCamera === 'function') stopPhotoCamera();
+      // Stop camera and close modal when leaving photo screen
+      if (state.currentScreen === 'photo') {
+        if (typeof stopPhotoCamera === 'function') stopPhotoCamera();
+        if (typeof closePhotoModal === 'function') closePhotoModal();
+      }
 
       const nextEl = await loadScreenHtml(key);
       if (!nextEl) return;
