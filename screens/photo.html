@@ -1,0 +1,36 @@
+<div id="screen-photo" class="screen">
+    <div class="appbar-mount"></div>
+
+    <!-- Immersive stage area -->
+    <main>
+      <!-- 16:9 photo stage: camera + member overlay -->
+      <div class="photo-stage" id="photoStage">
+
+        <!-- Camera panel -->
+        <div class="photo-camera-panel" id="photoCameraPanel">
+          <video id="photoVideo" autoplay playsinline muted></video>
+          <canvas id="photoPreviewCanvas" class="photo-preview" style="display:none;"></canvas>
+          <div class="photo-live-badge" id="photoLiveBadge">
+            <div class="photo-live-dot"></div>
+            <span class="photo-live-label">LIVE</span>
+          </div>
+        </div>
+
+        <!-- Member panel -->
+        <div class="photo-member-panel" id="photoMemberPanel">
+          <img id="photoMemberImg" alt="" style="display:none;" />
+          <div class="photo-member-silhouette" id="photoMemberSilhouette"></div>
+        </div>
+
+        <!-- Countdown overlay (inside stage = clipped to 16:9) -->
+        <div class="photo-countdown" id="photoCountdown">
+          <span class="photo-countdown-num" id="photoCountdownNum">3</span>
+        </div>
+
+        <!-- Date watermark (inside stage) -->
+        <div class="photo-date-watermark" id="photoDateWatermark"></div>
+
+      </div>
+    </main>
+    <div class="footer-mount"></div>
+  </div>

@@ -1,0 +1,58 @@
+<div id="screen-phase1" class="screen">
+
+    <div class="appbar-mount"></div>
+
+    <!-- Scrollable body -->
+    <div class="p1-body" id="p1Body">
+
+      <!-- Setlist badge pill -->
+      <div class="p1-badge">
+        <span class="p1-badge-dot"></span>
+        <span class="p1-badge-text" id="p1BadgePill">—</span>
+      </div>
+
+      <!-- Title -->
+      <div class="p1-title">
+        <h1>Pilih Nomormu</h1>
+        <p id="p1TitleDesc">Pilih 1 nomor untuk masuk ke undian 2Shot</p>
+      </div>
+
+      <!-- Number grid -->
+      <div class="p1-grid-wrap" style="width:100%;max-width:700px;">
+        <div class="p1-grid-scroll">
+          <div class="p1-number-grid" id="p1NumberGrid"></div>
+        </div>
+      </div>
+
+    </div><!-- /p1-body -->
+
+    <!-- Stats bar -->
+    <div class="p1-stats">
+      <div class="p1-stat">
+        <span class="p1-stat-label">Nomormu</span>
+        <span class="p1-stat-value pink" id="p1StatNomor">—</span>
+      </div>
+      <div class="p1-stat-divider"></div>
+      <div class="p1-stat">
+        <span class="p1-stat-label">Total Peserta</span>
+        <span class="p1-stat-value" id="p1StatTotal">—</span>
+      </div>
+      <div class="p1-stat-divider"></div>
+      <div class="p1-stat">
+        <span class="p1-stat-label">Kuota</span>
+        <span class="p1-stat-value gold">48</span>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="p1-buttons">
+      <button class="btn-acak" onclick="randomPickNumber()" aria-label="Ambil nomor acak">
+        Ambil Acak
+      </button>
+      <button class="btn-roulette" id="btnRoulette" disabled onclick="startRoulette()">
+        Mulai Roulette
+      </button>
+    </div>
+    <div class="footer-mount"></div>
+
+  </div>

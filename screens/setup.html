@@ -1,0 +1,76 @@
+<div id="screen-setup" class="screen active">
+
+    <div class="appbar-mount"></div>
+
+    <main class="main">
+
+      <!-- Hero -->
+      <div class="hero">
+        <h1 class="hero-title">Roulette2Shot</h1>
+        <p class="hero-subtitle">JKT48 Theater 2Shot Simulator</p>
+      </div>
+
+      <!-- Setlist Cards -->
+      <div class="setlist-grid" id="setlistGrid">
+
+        <div class="setlist-card"
+             data-team="passion"
+             onclick="selectSetlist(this,'passion')"
+             role="button" tabindex="0"
+             aria-label="Pilih PASSION 200%">
+          <div class="card-glow"></div>
+          <span class="icon lg filled card-icon">local_fire_department</span>
+          <div class="card-name">PASSION 200%</div>
+          <div class="card-team">Tim Passion</div>
+        </div>
+
+        <div class="setlist-card"
+             data-team="dream"
+             onclick="selectSetlist(this,'dream')"
+             role="button" tabindex="0"
+             aria-label="Pilih DREAM BAKUDAN">
+          <div class="card-glow"></div>
+          <span class="icon lg card-icon">cloud</span>
+          <div class="card-name">DREAM BAKUDAN</div>
+          <div class="card-team">Tim Dream</div>
+        </div>
+
+        <div class="setlist-card"
+             data-team="love"
+             onclick="selectSetlist(this,'love')"
+             role="button" tabindex="0"
+             aria-label="Pilih ITADAKILOVE">
+          <div class="card-glow"></div>
+          <span class="icon lg card-icon">favorite</span>
+          <div class="card-name">ITADAKILOVE</div>
+          <div class="card-team">Tim Love</div>
+        </div>
+
+      </div>
+
+      <!-- Member Roster -->
+      <div class="roster-section" id="rosterSection">
+        <div class="roster-header">
+          <h2 class="roster-title" id="rosterTitle">Member Tim</h2>
+          <span class="roster-meta" id="rosterMeta">— members</span>
+        </div>
+        <div class="roster-grid" id="rosterGrid"></div>
+      </div>
+
+      <!-- Action -->
+      <div class="action-area">
+        <button class="btn-start"
+                id="btnStart"
+                disabled
+                onclick="startSimulation()">
+          <span class="icon filled" style="font-size:22px">casino</span>
+          Mulai Simulasi
+        </button>
+        <span class="btn-hint" id="btnHint">Pilih setlist untuk memulai</span>
+      </div>
+
+    </main>
+
+    <div class="footer-mount"></div>
+
+  </div>

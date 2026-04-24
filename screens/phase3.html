@@ -1,0 +1,50 @@
+<div id="screen-phase3" class="screen">
+
+    <div class="appbar-mount"></div>
+
+    <div class="p3-body">
+      <div class="p3-blob"></div>
+
+      <!-- Left: group queue -->
+      <aside class="p3-left">
+        <div class="p3-panel-header">Queue</div>
+        <div class="p3-group-list" id="p3GroupList"></div>
+      </aside>
+
+      <!-- Right: wheel -->
+      <section class="p3-right">
+
+        <div class="p3-turn-info">
+          <div class="p3-turn-eyebrow">Giliran Sekarang</div>
+          <div class="p3-turn-name" id="p3TurnName">—</div>
+          <div class="p3-members-left" id="p3MembersLeft">— member tersisa</div>
+        </div>
+
+        <div class="p3-wheel-wrap">
+          <div class="p3-pointer"></div>
+          <div id="p3WheelSpinner">
+            <canvas id="p3Canvas" width="300" height="300"></canvas>
+          </div>
+        </div>
+
+        <div class="p3-result-badge" id="p3ResultBadge">
+          <span class="p3-result-group" id="p3ResultGroup">Grup —</span>
+          <span class="icon p3-result-arrow">arrow_forward</span>
+          <span class="p3-result-member" id="p3ResultMember">???</span>
+        </div>
+
+        <div class="p3-buttons">
+          <button class="btn-putar-wheel" id="btnPutarWheel" onclick="spinWheel()">
+            <span class="icon filled" style="font-size:15px;vertical-align:-2px;">casino</span>
+            Putar Wheel
+          </button>
+          <button class="btn-langsung-pilih" id="btnLangsungPilih" onclick="quickPickMember()">
+            Langsung Pilih
+          </button>
+        </div>
+
+      </section>
+    </div>
+    <div class="footer-mount"></div>
+
+  </div>

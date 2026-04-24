@@ -1,0 +1,56 @@
+<div id="screen-config" class="screen">
+
+    <div class="appbar-mount"></div>
+
+    <main class="config-main">
+
+      <div class="config-card">
+
+        <div class="config-icon">
+          <span class="icon xl" style="color:var(--primary-container);filter:drop-shadow(0 0 10px rgba(255,78,120,0.6));">group</span>
+        </div>
+
+        <div class="config-heading">
+          <h1>Jumlah Peserta</h1>
+          <p>Tentukan berapa total tiket yang beredar di session ini.<br>Minimal <strong style="color:var(--secondary-fixed);">49 peserta</strong> untuk memulai simulasi.</p>
+        </div>
+
+        <!-- Stepper -->
+        <div class="config-stepper">
+          <button class="stepper-btn" id="stepperMinus" onclick="stepperChange(-1)" aria-label="Kurangi">
+            <span class="icon" style="font-size:28px;">remove</span>
+          </button>
+          <div class="stepper-display">
+            <span class="stepper-value" id="stepperValue">100</span>
+            <span class="stepper-hint">Peserta</span>
+          </div>
+          <button class="stepper-btn" id="stepperPlus" onclick="stepperChange(1)" aria-label="Tambah">
+            <span class="icon" style="font-size:28px;">add</span>
+          </button>
+        </div>
+
+        <!-- Preset quick-pick -->
+        <div class="config-presets" id="configPresets">
+          <button class="config-preset-btn" onclick="setStepperValue(49)" data-val="49">49</button>
+          <button class="config-preset-btn" onclick="setStepperValue(100)" data-val="100">100</button>
+          <button class="config-preset-btn" onclick="setStepperValue(150)" data-val="150">150</button>
+          <button class="config-preset-btn" onclick="setStepperValue(200)" data-val="200">200</button>
+          <button class="config-preset-btn" onclick="setStepperValue(300)" data-val="300">300</button>
+        </div>
+
+        <p class="config-info">
+          Nomor-nomor antara <strong>1</strong> hingga <strong id="configMaxLabel">100</strong> akan dipakai dalam roulette pemanggilan.
+          Kuota 2Shot tetap <strong>48 nomor</strong>.
+        </p>
+
+        <button class="btn-config-start" id="btnConfigStart" onclick="confirmConfig()">
+          <span class="icon filled" style="font-size:20px;vertical-align:-3px;">casino</span>
+          Ambil Nomorku
+        </button>
+
+      </div>
+    </main>
+
+    <div class="footer-mount"></div>
+
+  </div>

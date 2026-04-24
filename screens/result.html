@@ -1,0 +1,30 @@
+<div id="screen-result" class="screen">
+    <div class="appbar-mount"></div>
+
+    <main style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-lg);padding:var(--space-xl) var(--space-md);overflow-y:auto;overflow-x:hidden;">
+      <!-- Result summary card -->
+      <div style="text-align:center;">
+        <div style="font-family:'Be Vietnam Pro',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.2em;color:var(--secondary-fixed);margin-bottom:var(--space-sm);">Antrean 2Shot Kamu</div>
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;color:var(--on-surface);margin-bottom:var(--space-sm);">Siap untuk 2Shot!</h1>
+        <p style="font-family:'Be Vietnam Pro',sans-serif;font-size:16px;color:var(--on-surface-variant);">Member pilihanmu sudah dikonfirmasi</p>
+      </div>
+
+      <!-- Selected member highlight -->
+      <div id="resultMemberCard" style="background:var(--surface);border:1px solid var(--primary-container);border-radius:16px;padding:var(--space-lg) var(--space-xl);text-align:center;box-shadow:0 0 30px rgba(255,45,107,0.25);min-width:220px;">
+        <div style="font-family:'Be Vietnam Pro',sans-serif;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.18em;color:var(--outline);margin-bottom:8px;">Member Terpilih</div>
+        <div id="resultMemberName" style="font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:900;color:var(--secondary-fixed);text-shadow:0 0 20px rgba(255,225,109,0.6);">—</div>
+        <div id="resultSetlistLabel" style="font-family:'Be Vietnam Pro',sans-serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:var(--primary);margin-top:6px;">—</div>
+      </div>
+
+      <!-- CTA -->
+      <button id="btnGoPhoto" onclick="navigateTo('photo')"
+        style="display:flex;align-items:center;gap:10px;padding:18px 40px;border-radius:var(--radius-full);border:none;background:var(--secondary-fixed);color:#1a1000;font-family:'Barlow Condensed','Space Grotesk',sans-serif;font-size:20px;font-weight:700;text-transform:uppercase;letter-spacing:2px;cursor:pointer;box-shadow:0 0 30px rgba(255,225,109,0.45);transition:box-shadow 0.25s ease,transform 0.2s ease;"
+        onmouseover="this.style.boxShadow='0 0 50px rgba(255,225,109,0.72)';this.style.transform='scale(1.03)'"
+        onmouseout="this.style.boxShadow='0 0 30px rgba(255,225,109,0.45)';this.style.transform='scale(1)'">
+        <span class="icon filled" style="font-size:22px;">photo_camera</span>
+        Mulai 2Shot
+      </button>
+    </main>
+
+    <div class="footer-mount"></div>
+  </div>
